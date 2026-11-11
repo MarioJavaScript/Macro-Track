@@ -1,0 +1,1 @@
+-- TODO: pegar aquí el esquema de la base de datos (CREATE DATABASE / CREATE TABLE).
