@@ -1,8 +1,7 @@
 package com.macrotrack;
 
+import com.macrotrack.controller.Navegacion;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -16,15 +15,12 @@ public class App extends Application {
      */
     @Override
     public void start(Stage stage) {
-        // Contenedor raíz vacío (aquí se cargarán las pantallas .fxml más adelante)
-        StackPane raiz = new StackPane();
-
-        // La escena es el contenido de la ventana: raíz + tamaño 400x700
-        Scene escena = new Scene(raiz, 400, 700);
-
-        // Configuramos la ventana y la mostramos
         stage.setTitle("MacroTrack");
-        stage.setScene(escena);
+
+        // Navegacion se encarga de cargar los .fxml en esta ventana
+        Navegacion.iniciar(stage);
+        Navegacion.ir(Navegacion.LOGIN);
+
         stage.show();
     }
 
