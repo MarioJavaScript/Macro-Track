@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Pantalla de inicio de sesion -->
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.macrotrack.controller.LoginController"
+            prefWidth="420.0" prefHeight="720.0">
+    <top>
+        <HBox styleClass="encabezado" alignment="CENTER_LEFT">
+            <VBox>
+                <Label styleClass="titulo" text="MacroTrack"/>
+                <Label styleClass="subtitulo" text="Inicia sesión para llevar tus macros"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <padding><Insets top="24" right="16" bottom="16" left="16"/></padding>
+            <VBox styleClass="tarjeta" spacing="10">
+                <Label styleClass="texto-suave" text="Correo"/>
+                <TextField fx:id="txtEmail" promptText="tucorreo@ejemplo.com"/>
+                <Label styleClass="texto-suave" text="Contraseña"/>
+                <PasswordField fx:id="txtPassword" promptText="Tu contraseña"/>
+                <Button fx:id="btnEntrar" text="Entrar" styleClass="boton-primario" maxWidth="Infinity"
+                        defaultButton="true" onAction="#entrar"/>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="6">
+            <padding><Insets top="0" right="16" bottom="16" left="16"/></padding>
+            <Label styleClass="texto-suave" text="¿No tienes cuenta?"/>
+            <Button text="Crear una" styleClass="boton-secundario" onAction="#irRegistro"/>
+        </HBox>
+    </bottom>
+</BorderPane>
