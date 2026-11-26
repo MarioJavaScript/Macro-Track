@@ -9,6 +9,7 @@ import com.macrotrack.service.MetaService;
 import com.macrotrack.service.RegistroService;
 import com.macrotrack.util.Sesion;
 import com.macrotrack.util.excepciones.MacroTrackException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -234,12 +235,9 @@ public class DashboardController {
         dialogo.getDialogPane().setContent(new VBox(grid));
         dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Si hay un error, se vuelve a abrir el diálogo con lo que escribió el usuario
-        while (true) {
-            Optional<ButtonType> respuesta = dialogo.showAndWait();
-            if (respuesta.isEmpty() || respuesta.get() != ButtonType.OK) {
-                return;
-            }
+        // valido al tocar aceptar, y si hay error no cierro el dialogo
+        Button btnOk = (Button) dialogo.getDialogPane().lookupButton(ButtonType.OK);
+        btnOk.addEventFilter(ActionEvent.ACTION, event -> {
             try {
                 Macros nueva = new Macros(
                         Navegacion.numero(txtKcal.getText(), "Las calorías"),
@@ -248,10 +246,14 @@ public class DashboardController {
                         Navegacion.numero(txtGrasas.getText(), "Las grasas"));
                 metaService.guardar(nueva);
                 cargarResumen();
-                return;
             } catch (MacroTrackException e) {
                 Navegacion.error(e.getMessage());
+                event.consume(); // dejo el dialogo abierto con lo escrito
             }
+        });
+        Optional<ButtonType> respuesta = dialogo.showAndWait();
+        if (respuesta.isEmpty() || respuesta.get() != ButtonType.OK) {
+            return;
         }
     }
 
