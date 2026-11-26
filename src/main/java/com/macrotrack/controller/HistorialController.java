@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -32,6 +33,7 @@ public class HistorialController {
         // lunes de la semana actual
         dpInicio.setValue(LocalDate.now().with(DayOfWeek.MONDAY));
         lstDias.setPlaceholder(new Label("No hay registros esta semana"));
+        lstDias.setOnMouseClicked(e -> { if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) abrirDia(); });
         cargar();
         dpInicio.valueProperty().addListener((obs, anterior, nueva) -> cargar());
     }
@@ -50,6 +52,18 @@ public class HistorialController {
             lblPromedio.setText(lineaMacros(reporteService.promedioDiario(inicio)));
         } catch (MacroTrackException e) {
             Navegacion.error(e.getMessage());
+        }
+    }
+
+    private void abrirDia() {
+        int i = lstDias.getSelectionModel().getSelectedIndex();
+        if (i < 0) {
+            return;
+        }
+        LocalDate fecha = dpInicio.getValue().plusDays(i);
+        DashboardController c = Navegacion.ir(Navegacion.DASHBOARD);
+        if (c != null) {
+            c.setFecha(fecha);
         }
     }
 
@@ -76,6 +90,7 @@ public class HistorialController {
             return;
         }
         try (PrintWriter out = new PrintWriter(destino, StandardCharsets.UTF_8)) {
+            out.print('\uFEFF');
             out.println("fecha,kcal,proteina,carbohidratos,grasas");
             for (Map.Entry<LocalDate, Macros> dia : reporteService.semana(inicio).entrySet()) {
                 out.println(csvFila(dia.getKey().toString(), dia.getValue()));
