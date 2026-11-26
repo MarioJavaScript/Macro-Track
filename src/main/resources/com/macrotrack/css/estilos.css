@@ -160,3 +160,17 @@
 .list-cell:filled:selected .label, .table-row-cell:filled:selected .table-cell {
     -fx-text-fill: -color-texto;
 }
+
+/* ---------- Gráfica semanal ---------- */
+.grafica-kcal {
+    -fx-padding: 0;
+}
+
+.grafica-kcal .chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.grafica-kcal .default-color0.chart-bar {
+    -fx-bar-fill: -color-primario;
+    -fx-background-radius: 4 4 0 0;
+}

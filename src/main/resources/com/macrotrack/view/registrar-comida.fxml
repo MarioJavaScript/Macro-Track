@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -28,7 +29,7 @@
     </top>
 
     <center>
-        <VBox spacing="12">
+        <VBox spacing="12" maxWidth="760.0">
             <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
 
             <!-- Búsqueda -->
@@ -43,6 +44,10 @@
 
             <!-- Datos de la porción -->
             <GridPane hgap="10" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="110.0"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
                 <Label text="Gramos" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                 <TextField fx:id="txtGramos" promptText="Ej. 150" onAction="#guardar" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
@@ -62,11 +67,13 @@
     </center>
 
     <bottom>
-        <HBox spacing="8">
+        <VBox alignment="CENTER">
             <padding><Insets top="0" right="16" bottom="16" left="16"/></padding>
-            <Button text="Cancelar" styleClass="boton-secundario" onAction="#volver"/>
-            <Button fx:id="btnGuardar" text="Guardar" styleClass="boton-primario" maxWidth="Infinity"
-                    HBox.hgrow="ALWAYS" onAction="#guardar"/>
-        </HBox>
+            <HBox spacing="8" maxWidth="728.0">
+                <Button text="Cancelar" styleClass="boton-secundario" onAction="#volver"/>
+                <Button fx:id="btnGuardar" text="Guardar" styleClass="boton-primario" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS" onAction="#guardar"/>
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>

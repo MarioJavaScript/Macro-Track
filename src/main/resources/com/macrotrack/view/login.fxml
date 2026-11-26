@@ -26,9 +26,9 @@
         </HBox>
     </top>
     <center>
-        <VBox spacing="12">
+        <VBox spacing="12" alignment="TOP_CENTER">
             <padding><Insets top="24" right="16" bottom="16" left="16"/></padding>
-            <VBox styleClass="tarjeta" spacing="10">
+            <VBox styleClass="tarjeta" spacing="10" maxWidth="420.0">
                 <Label styleClass="texto-suave" text="Correo"/>
                 <TextField fx:id="txtEmail" promptText="tucorreo@ejemplo.com"/>
                 <Label styleClass="texto-suave" text="Contraseña"/>

@@ -4,6 +4,8 @@ import com.macrotrack.model.Macros;
 import com.macrotrack.service.ReporteService;
 import com.macrotrack.util.excepciones.MacroTrackException;
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -22,7 +24,10 @@ import static com.macrotrack.controller.DashboardController.formato;
 
 public class HistorialController {
 
+    private static final String[] DIAS_CORTOS = {"Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"};
+
     @FXML private DatePicker dpInicio;
+    @FXML private BarChart<String, Number> graficaKcal;
     @FXML private ListView<String> lstDias;
     @FXML private Label lblPromedio;
 
@@ -41,26 +46,40 @@ public class HistorialController {
     private void cargar() {
         LocalDate inicio = dpInicio.getValue();
         if (inicio == null) {
+            limpiar();
             return;
         }
         try {
             Map<LocalDate, Macros> semana = reporteService.semana(inicio);
             lstDias.getItems().clear();
+            XYChart.Series<String, Number> serie = new XYChart.Series<>();
             for (Map.Entry<LocalDate, Macros> dia : semana.entrySet()) {
                 lstDias.getItems().add(linea(dia.getKey(), dia.getValue()));
+                serie.getData().add(new XYChart.Data<>(etiquetaDia(dia.getKey()), dia.getValue().getKcal()));
             }
-            lblPromedio.setText(lineaMacros(reporteService.promedioDiario(inicio)));
+            graficaKcal.getData().setAll(serie);
+            lblPromedio.setText(lineaMacros(ReporteService.promediar(semana)));
         } catch (MacroTrackException e) {
+            // No dejar a la vista los datos de la semana anterior
+            limpiar();
             Navegacion.error(e.getMessage());
         }
     }
 
+    /** Vacía la lista, la gráfica y el promedio. */
+    private void limpiar() {
+        lstDias.getItems().clear();
+        graficaKcal.getData().clear();
+        lblPromedio.setText("");
+    }
+
     private void abrirDia() {
+        LocalDate inicio = dpInicio.getValue();
         int i = lstDias.getSelectionModel().getSelectedIndex();
-        if (i < 0) {
+        if (inicio == null || i < 0) {
             return;
         }
-        LocalDate fecha = dpInicio.getValue().plusDays(i);
+        LocalDate fecha = inicio.plusDays(i);
         DashboardController c = Navegacion.ir(Navegacion.DASHBOARD);
         if (c != null) {
             c.setFecha(fecha);
@@ -89,17 +108,33 @@ public class HistorialController {
         if (destino == null) {
             return;
         }
+        Map<LocalDate, Macros> semana;
+        try {
+            semana = reporteService.semana(inicio);
+        } catch (MacroTrackException e) {
+            Navegacion.error(e.getMessage());
+            return;
+        }
         try (PrintWriter out = new PrintWriter(destino, StandardCharsets.UTF_8)) {
             out.print('\uFEFF');
             out.println("fecha,kcal,proteina,carbohidratos,grasas");
-            for (Map.Entry<LocalDate, Macros> dia : reporteService.semana(inicio).entrySet()) {
+            for (Map.Entry<LocalDate, Macros> dia : semana.entrySet()) {
                 out.println(csvFila(dia.getKey().toString(), dia.getValue()));
             }
-            out.println(csvFila("promedio", reporteService.promedioDiario(inicio)));
-            Navegacion.info("Historial exportado a " + destino.getName());
+            out.println(csvFila("promedio", ReporteService.promediar(semana)));
+            // PrintWriter no lanza IOException al escribir: hay que preguntar si hubo error
+            if (out.checkError()) {
+                Navegacion.error("No se pudo exportar el historial");
+            } else {
+                Navegacion.info("Historial exportado a " + destino.getName());
+            }
         } catch (IOException e) {
             Navegacion.error("No se pudo exportar el historial");
         }
+    }
+
+    static String etiquetaDia(LocalDate fecha) {
+        return DIAS_CORTOS[fecha.getDayOfWeek().getValue() - 1] + " " + fecha.getDayOfMonth();
     }
 
     static String csvFila(String etiqueta, Macros m) {

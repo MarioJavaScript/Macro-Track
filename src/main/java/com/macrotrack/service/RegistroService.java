@@ -46,7 +46,8 @@ public class RegistroService {
     public Registro registrar(int alimentoId, double gramos, TipoComida tipo, LocalDate fecha) {
         int usuarioId = Sesion.actual().getId();
 
-        // 1. Validar lo que mandó el usuario
+        // 1. Redondear como la BD (DECIMAL(6,1)) y validar lo que mandó el usuario
+        gramos = redondearGramos(gramos);
         validarGramos(gramos);
         if (tipo == null) {
             throw new ValidacionException("Elige el tipo de comida");
@@ -73,11 +74,14 @@ public class RegistroService {
     }
 
     /**
-     * Cambia los gramos de un registro propio y recalcula sus macros.
+     * Cambia los gramos de un registro propio y escala sus macros guardados
+     * (no se recalculan con el alimento actual del catálogo).
      *
      * @return el registro actualizado
      */
     public Registro editarGramos(int registroId, double gramos) {
+        // Redondear como la BD (DECIMAL(6,1)) antes de validar y calcular
+        gramos = redondearGramos(gramos);
         validarGramos(gramos);
         try {
             Registro registro = buscarPropio(registroId);
@@ -126,6 +130,14 @@ public class RegistroService {
         } catch (SQLException e) {
             throw new ErrorBDException(e);
         }
+    }
+
+    /**
+     * Redondea los gramos a 1 decimal, igual que la columna DECIMAL(6,1),
+     * para que los macros se calculen con los mismos gramos que se guardan.
+     */
+    public static double redondearGramos(double gramos) {
+        return Math.round(gramos * 10) / 10.0;
     }
 
     /** Gramos entre 0.1 y 5000. */
