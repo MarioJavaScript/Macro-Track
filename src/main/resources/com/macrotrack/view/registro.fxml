@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -13,7 +15,10 @@
             fx:controller="com.macrotrack.controller.RegistroController"
             prefWidth="420.0" prefHeight="720.0">
     <top>
-        <HBox styleClass="encabezado" alignment="CENTER_LEFT">
+        <HBox styleClass="encabezado" alignment="CENTER_LEFT" spacing="12">
+            <ImageView fitWidth="44" fitHeight="44" preserveRatio="true" smooth="true">
+                <image><Image url="@../logo.png"/></image>
+            </ImageView>
             <VBox>
                 <Label styleClass="titulo" text="MacroTrack"/>
                 <Label styleClass="subtitulo" text="Crea tu cuenta para empezar"/>
