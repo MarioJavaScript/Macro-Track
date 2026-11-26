@@ -61,23 +61,23 @@
                         <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
                     <Label text="Nombre" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtNombre" onAction="#guardar" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                     <Label text="kcal" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtKcal" promptText="0 - 900" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtKcal" promptText="0 - 900" onAction="#guardar" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <Label text="Proteína (g)" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtProteina" promptText="0 - 100" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtProteina" promptText="0 - 100" onAction="#guardar" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                     <Label text="Carbohidratos (g)" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtCarbos" promptText="0 - 100" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtCarbos" promptText="0 - 100" onAction="#guardar" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
                     <Label text="Grasas (g)" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <TextField fx:id="txtGrasas" promptText="0 - 100" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtGrasas" promptText="0 - 100" onAction="#guardar" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
                 </GridPane>
 
-                <Label styleClass="texto-suave" wrapText="true"
-                       text="Proteína + carbohidratos + grasas no puede pasar de 100 g."/>
+                <Label fx:id="lblSumaMacros" styleClass="texto-suave" wrapText="true"
+                       text="Suma P + C + G: 0 / 100 g"/>
             </VBox>
 
             <Button text="Guardar" styleClass="boton-primario" maxWidth="Infinity" onAction="#guardar"/>
