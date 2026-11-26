@@ -1,4 +1,4 @@
--- TODO: pegar aquí el esquema de la base de datos (CREATE DATABASE / CREATE TABLE)-- =====================================================
+-- =====================================================
 -- MacroTrack - Esquema de base de datos (MySQL 8)
 -- =====================================================
 CREATE DATABASE IF NOT EXISTS macrotrack
