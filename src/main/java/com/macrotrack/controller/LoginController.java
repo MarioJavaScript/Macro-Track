@@ -11,6 +11,12 @@ public class LoginController {
     @FXML private PasswordField txtPassword;
     private final AuthService authService = new AuthService();
 
+    public void setEmail(String email) {
+        if (email != null) {
+            txtEmail.setText(email);
+        }
+    }
+
     @FXML
     private void entrar() {
         try {

@@ -1,5 +1,6 @@
 package com.macrotrack.controller;
 
+import com.macrotrack.model.Usuario;
 import com.macrotrack.service.AuthService;
 import com.macrotrack.util.excepciones.MacroTrackException;
 import javafx.fxml.FXML;
@@ -20,9 +21,12 @@ public class RegistroController {
             return;
         }
         try {
-            authService.registrar(txtNombre.getText(), txtEmail.getText(), txtPassword.getText());
+            Usuario cuenta = authService.registrar(txtNombre.getText(), txtEmail.getText(), txtPassword.getText());
             Navegacion.info("Cuenta creada. Ya puedes iniciar sesión");
-            Navegacion.ir(Navegacion.LOGIN);
+            LoginController login = Navegacion.ir(Navegacion.LOGIN);
+            if (login != null) {
+                login.setEmail(cuenta.getEmail());
+            }
         } catch (MacroTrackException e) {
             Navegacion.error(e.getMessage());
         }

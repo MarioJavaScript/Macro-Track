@@ -14,6 +14,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 import java.time.LocalDate;
@@ -59,6 +60,7 @@ public class RegistrarComidaController {
         lstResultados.getSelectionModel().selectedItemProperty()
                 .addListener((obs, anterior, nuevo) -> mostrarAlimento(nuevo));
         txtGramos.textProperty().addListener((obs, anterior, nuevo) -> actualizarVistaPrevia());
+        lstResultados.setOnMouseClicked(e -> { if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) txtGramos.requestFocus(); });
 
         btnGuardar.setDisable(true);
     }
