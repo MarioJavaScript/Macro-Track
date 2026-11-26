@@ -49,7 +49,7 @@ public class HistorialController {
             for (Map.Entry<LocalDate, Macros> dia : semana.entrySet()) {
                 lstDias.getItems().add(linea(dia.getKey(), dia.getValue()));
             }
-            lblPromedio.setText(lineaMacros(reporteService.promedioDiario(inicio)));
+            lblPromedio.setText(lineaMacros(ReporteService.promediar(semana)));
         } catch (MacroTrackException e) {
             Navegacion.error(e.getMessage());
         }
@@ -89,13 +89,20 @@ public class HistorialController {
         if (destino == null) {
             return;
         }
+        Map<LocalDate, Macros> semana;
+        try {
+            semana = reporteService.semana(inicio);
+        } catch (MacroTrackException e) {
+            Navegacion.error(e.getMessage());
+            return;
+        }
         try (PrintWriter out = new PrintWriter(destino, StandardCharsets.UTF_8)) {
             out.print('\uFEFF');
             out.println("fecha,kcal,proteina,carbohidratos,grasas");
-            for (Map.Entry<LocalDate, Macros> dia : reporteService.semana(inicio).entrySet()) {
+            for (Map.Entry<LocalDate, Macros> dia : semana.entrySet()) {
                 out.println(csvFila(dia.getKey().toString(), dia.getValue()));
             }
-            out.println(csvFila("promedio", reporteService.promedioDiario(inicio)));
+            out.println(csvFila("promedio", ReporteService.promediar(semana)));
             Navegacion.info("Historial exportado a " + destino.getName());
         } catch (IOException e) {
             Navegacion.error("No se pudo exportar el historial");
