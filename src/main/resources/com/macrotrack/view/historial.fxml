@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -20,6 +21,8 @@
                 <Label styleClass="titulo" text="Historial"/>
                 <Label styleClass="subtitulo" text="Tus macros de la semana"/>
             </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Exportar" styleClass="boton-encabezado" onAction="#exportar"/>
         </HBox>
     </top>
 
