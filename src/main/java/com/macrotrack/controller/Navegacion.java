@@ -28,6 +28,9 @@ public final class Navegacion {
 
     private static final String CARPETA_VISTAS = "/com/macrotrack/view/";
     private static final String CSS = "/com/macrotrack/css/estilos.css";
+    private static final double MIN_ANCHO = 400.0;
+    private static final double MIN_ALTO = 620.0;
+    private static final double ANCHO_ADMIN = 780.0;
 
     private static Stage ventana;
 
@@ -38,11 +41,14 @@ public final class Navegacion {
     /** Se llama una vez desde App.start() con la ventana principal. */
     public static void iniciar(Stage stage) {
         ventana = stage;
+        ventana.setMinWidth(MIN_ANCHO);
+        ventana.setMinHeight(MIN_ALTO);
     }
 
     /**
      * Carga una pantalla .fxml, la pone en la ventana y devuelve su controlador
      * (por si hay que pasarle datos, por ejemplo una fecha).
+     * Reutiliza la escena actual para conservar tamaño, posición y estado maximizado.
      *
      * @return el controlador de la pantalla, o null si no se pudo cargar
      */
@@ -56,14 +62,22 @@ public final class Navegacion {
             FXMLLoader loader = new FXMLLoader(url);
             Parent raiz = loader.load();
 
-            Scene escena = new Scene(raiz);
-            URL css = Navegacion.class.getResource(CSS);
-            if (css != null) {
-                escena.getStylesheets().add(css.toExternalForm());
+            Scene escena = ventana.getScene();
+            if (escena == null) {
+                escena = new Scene(raiz);
+                URL css = Navegacion.class.getResource(CSS);
+                if (css != null) {
+                    escena.getStylesheets().add(css.toExternalForm());
+                }
+                ventana.setScene(escena);
+                ventana.sizeToScene();
+                ventana.centerOnScreen();
+            } else {
+                escena.setRoot(raiz);
+                if (ADMIN_ALIMENTOS.equals(fxml) && !ventana.isMaximized() && ventana.getWidth() < ANCHO_ADMIN) {
+                    ventana.setWidth(ANCHO_ADMIN);
+                }
             }
-            ventana.setScene(escena);
-            ventana.sizeToScene();
-            ventana.centerOnScreen();
             return loader.getController();
         } catch (IOException e) {
             error("No se pudo abrir la pantalla " + fxml);

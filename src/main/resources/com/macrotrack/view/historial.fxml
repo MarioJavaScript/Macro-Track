@@ -27,7 +27,7 @@
     </top>
 
     <center>
-        <VBox spacing="12">
+        <VBox spacing="12" maxWidth="760.0">
             <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
 
             <HBox alignment="CENTER_LEFT" spacing="8">
