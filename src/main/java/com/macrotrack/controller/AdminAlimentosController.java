@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
 import java.util.function.ToDoubleFunction;
@@ -39,6 +40,7 @@ public class AdminAlimentosController {
     @FXML private TextField txtProteina;
     @FXML private TextField txtCarbos;
     @FXML private TextField txtGrasas;
+    @FXML private Label lblSumaMacros;
     @FXML private Button btnBaja;
 
     private final AlimentoService alimentoService = new AlimentoService();
@@ -75,6 +77,16 @@ public class AdminAlimentosController {
 
         esperaBusqueda.setOnFinished(e -> buscar());
         txtBuscar.textProperty().addListener((obs, anterior, nuevo) -> esperaBusqueda.playFromStart());
+
+        tblAlimentos.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE) {
+                darDeBaja();
+            }
+        });
+
+        txtProteina.textProperty().addListener((obs, anterior, nuevo) -> actualizarSumaMacros());
+        txtCarbos.textProperty().addListener((obs, anterior, nuevo) -> actualizarSumaMacros());
+        txtGrasas.textProperty().addListener((obs, anterior, nuevo) -> actualizarSumaMacros());
 
         nuevo();
     }
@@ -119,7 +131,39 @@ public class AdminAlimentosController {
         txtCarbos.clear();
         txtGrasas.clear();
         btnBaja.setDisable(true);
+        actualizarSumaMacros();
         txtNombre.requestFocus();
+    }
+
+    /** Actualiza el indicador de suma de macros (P + C + G) en vivo y marca en rojo si pasa de 100 g. */
+    private void actualizarSumaMacros() {
+        double suma = sumarMacros(txtProteina.getText(), txtCarbos.getText(), txtGrasas.getText());
+        boolean excedido = suma > 100;
+        lblSumaMacros.getStyleClass().removeAll("texto-suave", "texto-peligro");
+        if (excedido) {
+            lblSumaMacros.getStyleClass().add("texto-peligro");
+            lblSumaMacros.setText("Suma P + C + G: " + formato(suma) + " / 100 g (excede 100 g)");
+        } else {
+            lblSumaMacros.getStyleClass().add("texto-suave");
+            lblSumaMacros.setText("Suma P + C + G: " + formato(suma) + " / 100 g");
+        }
+    }
+
+    /** Suma los valores numéricos válidos de proteína, carbohidratos y grasas (vacíos o inválidos cuentan como 0). */
+    static double sumarMacros(String proteina, String carbos, String grasas) {
+        return parsearOCero(proteina) + parsearOCero(carbos) + parsearOCero(grasas);
+    }
+
+    private static double parsearOCero(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return 0;
+        }
+        try {
+            double valor = Double.parseDouble(texto.trim().replace(',', '.'));
+            return valor > 0 ? valor : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     /** Crea o actualiza según si hay un alimento seleccionado. */
