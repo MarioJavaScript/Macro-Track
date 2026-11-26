@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.macrotrack.controller.HistorialController"
+            prefWidth="420.0" prefHeight="720.0">
+
+    <top>
+        <HBox styleClass="encabezado" alignment="CENTER_LEFT" spacing="10">
+            <Button text="←" styleClass="boton-encabezado" onAction="#volver"/>
+            <VBox>
+                <Label styleClass="titulo" text="Historial"/>
+                <Label styleClass="subtitulo" text="Tus macros de la semana"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12">
+            <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Semana del"/>
+                <DatePicker fx:id="dpInicio"/>
+            </HBox>
+
+            <Label text="Totales por día" styleClass="tarjeta-titulo"/>
+            <ListView fx:id="lstDias" VBox.vgrow="ALWAYS"/>
+
+            <VBox styleClass="tarjeta" spacing="4">
+                <Label text="Promedio diario" styleClass="texto-suave"/>
+                <Label fx:id="lblPromedio" styleClass="tarjeta-titulo" text="—"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
