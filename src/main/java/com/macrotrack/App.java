@@ -2,6 +2,7 @@ package com.macrotrack;
 
 import com.macrotrack.controller.Navegacion;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -16,6 +17,12 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("MacroTrack");
+
+        // Ícono de la ventana y de la barra de tareas
+        var logo = App.class.getResourceAsStream("/com/macrotrack/logo.png");
+        if (logo != null) {
+            stage.getIcons().add(new Image(logo));
+        }
 
         // Navegacion se encarga de cargar los .fxml en esta ventana
         Navegacion.iniciar(stage);

@@ -66,7 +66,6 @@ public final class Navegacion {
             ventana.centerOnScreen();
             return loader.getController();
         } catch (IOException e) {
-            e.printStackTrace();
             error("No se pudo abrir la pantalla " + fxml);
             return null;
         }

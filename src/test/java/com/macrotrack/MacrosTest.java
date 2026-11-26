@@ -54,4 +54,14 @@ class MacrosTest {
 
         assertEquals(100, original.getKcal(), DELTA);
     }
+
+    @Test
+    void escalarPorCeroDejaTodoEnCero() {
+        Macros r = new Macros(165, 31, 10, 3.6).escalar(0);
+
+        assertEquals(0, r.getKcal(), DELTA);
+        assertEquals(0, r.getProteina(), DELTA);
+        assertEquals(0, r.getCarbohidratos(), DELTA);
+        assertEquals(0, r.getGrasas(), DELTA);
+    }
 }

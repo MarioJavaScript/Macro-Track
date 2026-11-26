@@ -1,5 +1,8 @@
 # Copia este archivo como db.properties y ajusta tus datos.
 # db.properties NO se sube a Git (está en .gitignore).
-db.url=jdbc:mysql://localhost:3306/macrotrack
+# url de conexion; los parametros del final ayudan con MySQL 8 (caching_sha2_password)
+db.url=jdbc:mysql://localhost:3306/macrotrack?allowPublicKeyRetrieval=true&useSSL=false
+# usuario que se conecta
 db.usuario=root
+# contrasena de ese usuario (dejala vacia si tu MySQL local no pide password)
 db.password=CAMBIAR

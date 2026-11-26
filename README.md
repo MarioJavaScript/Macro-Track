@@ -22,8 +22,25 @@ mysql -u root -p < sql/schema.sql
 
 `db.properties` no se sube a Git.
 
+Si ves el error "Falta db.properties: copia db.properties.example y configúralo", revisa que:
+
+- el archivo `src/main/resources/db.properties` exista;
+- `db.url` apunte a tu servidor (`jdbc:mysql://localhost:3306/macrotrack`);
+- `db.usuario` y `db.password` sean los de tu MySQL;
+- el servidor MySQL esté encendido.
+
 ## Ejecutar
 
 ```bash
 mvn javafx:run
 ```
+
+## Probar
+
+```bash
+mvn -q test
+```
+
+## Estado
+
+Pantallas listas: inicio de sesión, registro, dashboard, registrar comida, historial y admin de alimentos.

@@ -52,6 +52,7 @@
     -fx-text-fill: -color-suave;
     -fx-font-size: 12px;
 }
+.texto-peligro { -fx-text-fill: #c62828; -fx-font-weight: bold; }
 
 .numero-grande {
     -fx-font-size: 22px;
@@ -138,6 +139,7 @@
 .barra-proteina > .bar { -fx-background-color: #e57373; }
 .barra-carbos > .bar { -fx-background-color: #ffb74d; }
 .barra-grasas > .bar { -fx-background-color: #64b5f6; }
+.barra-excedida > .bar { -fx-background-color: #d32f2f; }
 
 /* ---------- Listas y tablas ---------- */
 .list-view, .table-view {

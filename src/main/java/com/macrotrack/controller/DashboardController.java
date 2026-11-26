@@ -9,6 +9,7 @@ import com.macrotrack.service.MetaService;
 import com.macrotrack.service.RegistroService;
 import com.macrotrack.util.Sesion;
 import com.macrotrack.util.excepciones.MacroTrackException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -20,6 +21,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -68,6 +71,8 @@ public class DashboardController {
 
         lstRegistros.setCellFactory(lista -> new CeldaRegistro());
         lstRegistros.setPlaceholder(new Label("No has registrado comidas este día"));
+        lstRegistros.setOnMouseClicked(e -> { if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) editarGramos(); });
+        lstRegistros.setOnKeyPressed(e -> { if (e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE) eliminarRegistro(); });
 
         dpFecha.setValue(LocalDate.now());
         cargarResumen();
@@ -113,6 +118,16 @@ public class DashboardController {
             lblKcalRestan.setText("Restan " + formato(restan) + " kcal");
         } else {
             lblKcalRestan.setText("Te pasaste " + formato(-restan) + " kcal");
+        }
+        boolean excedido = tieneMeta && restan < 0;
+        lblKcalRestan.getStyleClass().remove("texto-peligro");
+        barKcal.getStyleClass().remove("barra-excedida");
+        barKcal.getStyleClass().remove("barra-kcal");
+        if (excedido) {
+            lblKcalRestan.getStyleClass().add("texto-peligro");
+            barKcal.getStyleClass().add("barra-excedida");
+        } else {
+            barKcal.getStyleClass().add("barra-kcal");
         }
         barKcal.setProgress(ResumenDiario.porcentaje(consumido.getKcal(), meta.getKcal()) / 100);
 
@@ -234,12 +249,9 @@ public class DashboardController {
         dialogo.getDialogPane().setContent(new VBox(grid));
         dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Si hay un error, se vuelve a abrir el diálogo con lo que escribió el usuario
-        while (true) {
-            Optional<ButtonType> respuesta = dialogo.showAndWait();
-            if (respuesta.isEmpty() || respuesta.get() != ButtonType.OK) {
-                return;
-            }
+        // valido al tocar aceptar, y si hay error no cierro el dialogo
+        Button btnOk = (Button) dialogo.getDialogPane().lookupButton(ButtonType.OK);
+        btnOk.addEventFilter(ActionEvent.ACTION, event -> {
             try {
                 Macros nueva = new Macros(
                         Navegacion.numero(txtKcal.getText(), "Las calorías"),
@@ -248,10 +260,14 @@ public class DashboardController {
                         Navegacion.numero(txtGrasas.getText(), "Las grasas"));
                 metaService.guardar(nueva);
                 cargarResumen();
-                return;
             } catch (MacroTrackException e) {
                 Navegacion.error(e.getMessage());
+                event.consume(); // dejo el dialogo abierto con lo escrito
             }
+        });
+        Optional<ButtonType> respuesta = dialogo.showAndWait();
+        if (respuesta.isEmpty() || respuesta.get() != ButtonType.OK) {
+            return;
         }
     }
 

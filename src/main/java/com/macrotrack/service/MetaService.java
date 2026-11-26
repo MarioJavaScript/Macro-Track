@@ -6,6 +6,7 @@ import com.macrotrack.model.Meta;
 import com.macrotrack.util.Sesion;
 import com.macrotrack.util.Validar;
 import com.macrotrack.util.excepciones.ErrorBDException;
+import com.macrotrack.util.excepciones.ValidacionException;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -43,6 +44,9 @@ public class MetaService {
      */
     public void guardar(Macros objetivo) {
         int usuarioId = Sesion.actual().getId();
+        if (objetivo == null) {
+            throw new ValidacionException("Los macros son obligatorios");
+        }
 
         Validar.positivo(objetivo.getKcal(), "Las calorías");
         Validar.rango(objetivo.getKcal(), 0, MAX_KCAL, "Las calorías");

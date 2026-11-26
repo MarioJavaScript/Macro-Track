@@ -44,7 +44,7 @@
             <!-- Datos de la porción -->
             <GridPane hgap="10" vgap="10">
                 <Label text="Gramos" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtGramos" promptText="Ej. 150" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <TextField fx:id="txtGramos" promptText="Ej. 150" onAction="#guardar" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                 <Label text="Tipo de comida" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                 <ComboBox fx:id="cmbTipo" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1"/>

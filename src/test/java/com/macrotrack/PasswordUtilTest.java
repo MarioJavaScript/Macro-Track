@@ -1,8 +1,10 @@
 package com.macrotrack;
 
 import com.macrotrack.util.PasswordUtil;
+import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,5 +34,13 @@ class PasswordUtilTest {
     void verificarRechazaUnHashMalFormado() {
         assertFalse(PasswordUtil.verificar("secreta123", "esto no es un hash"));
         assertFalse(PasswordUtil.verificar("secreta123", null));
+    }
+
+    @Test
+    void hashTieneFormatoSaltHash() {
+        String[] partes = PasswordUtil.hash("secreta123").split(":");
+        assertEquals(2, partes.length);
+        Base64.getDecoder().decode(partes[0]);
+        Base64.getDecoder().decode(partes[1]);
     }
 }

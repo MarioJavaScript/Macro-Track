@@ -22,6 +22,11 @@ class ValidarTest {
     }
 
     @Test
+    void emailConSubdominiosPasa() {
+        assertDoesNotThrow(() -> Validar.email("mario@mail.correo.com"));
+    }
+
+    @Test
     void valorFueraDeRangoLanzaValidacionException() {
         assertThrows(ValidacionException.class, () -> Validar.rango(0, 0.1, 5000, "Los gramos"));
         assertThrows(ValidacionException.class, () -> Validar.rango(5001, 0.1, 5000, "Los gramos"));
