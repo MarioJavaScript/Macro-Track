@@ -31,9 +31,17 @@ public class Registro {
         this.macros = alimento.calcularPara(gramos);
     }
 
-    /** Cambia los gramos y recalcula los macros en el mismo paso, para que no queden desfasados. */
+    /**
+     * Cambia los gramos y ajusta los macros en el mismo paso, para que no queden desfasados.
+     * No usa el alimento del catálogo (pudo cambiar desde que se registró): escala los macros
+     * guardados en proporción a los gramos, así el historial conserva la composición original.
+     */
     public void cambiarGramos(double nuevosGramos) {
-        this.macros = alimento.calcularPara(nuevosGramos);
+        if (gramos <= 0 || nuevosGramos <= 0) {
+            throw new IllegalArgumentException("Los gramos deben ser mayores que cero");
+        }
+        // Ej.: de 100 g a 50 g el factor es 0.5, la mitad de los macros guardados
+        this.macros = macros.escalar(nuevosGramos / gramos);
         this.gramos = nuevosGramos;
     }
 
