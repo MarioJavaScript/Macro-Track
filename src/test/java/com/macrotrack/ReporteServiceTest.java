@@ -47,7 +47,7 @@ class ReporteServiceTest {
     }
 
     @Test
-    void promediarIgnoraLosDiasVacios() {
+    void promediarIgnoraLosDiasDeRelleno() {
         Map<LocalDate, Macros> totales = new HashMap<>();
         totales.put(LUNES, new Macros(2000, 100, 200, 60));
         totales.put(LUNES.plusDays(3), new Macros(1000, 50, 100, 30));
@@ -59,6 +59,22 @@ class ReporteServiceTest {
         assertEquals(75, promedio.getProteina(), DELTA);
         assertEquals(150, promedio.getCarbohidratos(), DELTA);
         assertEquals(45, promedio.getGrasas(), DELTA);
+    }
+
+    @Test
+    void promediarCuentaDiasConRegistrosQueSumanCero() {
+        // Un día con registros de 0 kcal viene de la consulta como un Macros nuevo y sí cuenta
+        Map<LocalDate, Macros> totales = new HashMap<>();
+        totales.put(LUNES, new Macros(3000, 150, 300, 90));
+        totales.put(LUNES.plusDays(1), new Macros(0, 0, 0, 0));
+
+        // Da lo mismo con el mapa de la consulta que con la semana rellenada
+        Macros desdeConsulta = ReporteService.promediar(totales);
+        Macros desdeSemana = ReporteService.promediar(ReporteService.rellenarSemana(LUNES, totales));
+
+        assertEquals(1500, desdeConsulta.getKcal(), DELTA);
+        assertEquals(1500, desdeSemana.getKcal(), DELTA);
+        assertEquals(75, desdeSemana.getProteina(), DELTA);
     }
 
     @Test
