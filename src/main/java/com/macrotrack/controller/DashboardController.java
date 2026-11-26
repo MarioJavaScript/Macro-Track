@@ -21,6 +21,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -69,6 +71,8 @@ public class DashboardController {
 
         lstRegistros.setCellFactory(lista -> new CeldaRegistro());
         lstRegistros.setPlaceholder(new Label("No has registrado comidas este día"));
+        lstRegistros.setOnMouseClicked(e -> { if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) editarGramos(); });
+        lstRegistros.setOnKeyPressed(e -> { if (e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE) eliminarRegistro(); });
 
         dpFecha.setValue(LocalDate.now());
         cargarResumen();
@@ -114,6 +118,16 @@ public class DashboardController {
             lblKcalRestan.setText("Restan " + formato(restan) + " kcal");
         } else {
             lblKcalRestan.setText("Te pasaste " + formato(-restan) + " kcal");
+        }
+        boolean excedido = tieneMeta && restan < 0;
+        lblKcalRestan.getStyleClass().remove("texto-peligro");
+        barKcal.getStyleClass().remove("barra-excedida");
+        barKcal.getStyleClass().remove("barra-kcal");
+        if (excedido) {
+            lblKcalRestan.getStyleClass().add("texto-peligro");
+            barKcal.getStyleClass().add("barra-excedida");
+        } else {
+            barKcal.getStyleClass().add("barra-kcal");
         }
         barKcal.setProgress(ResumenDiario.porcentaje(consumido.getKcal(), meta.getKcal()) / 100);
 
