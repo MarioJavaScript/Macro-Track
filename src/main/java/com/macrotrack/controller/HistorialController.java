@@ -46,6 +46,7 @@ public class HistorialController {
     private void cargar() {
         LocalDate inicio = dpInicio.getValue();
         if (inicio == null) {
+            limpiar();
             return;
         }
         try {
@@ -59,16 +60,26 @@ public class HistorialController {
             graficaKcal.getData().setAll(serie);
             lblPromedio.setText(lineaMacros(ReporteService.promediar(semana)));
         } catch (MacroTrackException e) {
+            // No dejar a la vista los datos de la semana anterior
+            limpiar();
             Navegacion.error(e.getMessage());
         }
     }
 
+    /** Vacía la lista, la gráfica y el promedio. */
+    private void limpiar() {
+        lstDias.getItems().clear();
+        graficaKcal.getData().clear();
+        lblPromedio.setText("");
+    }
+
     private void abrirDia() {
+        LocalDate inicio = dpInicio.getValue();
         int i = lstDias.getSelectionModel().getSelectedIndex();
-        if (i < 0) {
+        if (inicio == null || i < 0) {
             return;
         }
-        LocalDate fecha = dpInicio.getValue().plusDays(i);
+        LocalDate fecha = inicio.plusDays(i);
         DashboardController c = Navegacion.ir(Navegacion.DASHBOARD);
         if (c != null) {
             c.setFecha(fecha);
@@ -111,7 +122,12 @@ public class HistorialController {
                 out.println(csvFila(dia.getKey().toString(), dia.getValue()));
             }
             out.println(csvFila("promedio", ReporteService.promediar(semana)));
-            Navegacion.info("Historial exportado a " + destino.getName());
+            // PrintWriter no lanza IOException al escribir: hay que preguntar si hubo error
+            if (out.checkError()) {
+                Navegacion.error("No se pudo exportar el historial");
+            } else {
+                Navegacion.info("Historial exportado a " + destino.getName());
+            }
         } catch (IOException e) {
             Navegacion.error("No se pudo exportar el historial");
         }
