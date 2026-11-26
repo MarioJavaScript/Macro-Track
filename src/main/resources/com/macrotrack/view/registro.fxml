@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Pantalla de registro de usuario -->
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.macrotrack.controller.RegistroController"
+            prefWidth="420.0" prefHeight="720.0">
+    <top>
+        <HBox styleClass="encabezado" alignment="CENTER_LEFT">
+            <VBox>
+                <Label styleClass="titulo" text="MacroTrack"/>
+                <Label styleClass="subtitulo" text="Crea tu cuenta para empezar"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <padding><Insets top="24" right="16" bottom="16" left="16"/></padding>
+            <VBox styleClass="tarjeta" spacing="10">
+                <Label styleClass="texto-suave" text="Nombre"/>
+                <TextField fx:id="txtNombre" promptText="Tu nombre"/>
+                <Label styleClass="texto-suave" text="Correo"/>
+                <TextField fx:id="txtEmail" promptText="tucorreo@ejemplo.com"/>
+                <Label styleClass="texto-suave" text="Contraseña"/>
+                <PasswordField fx:id="txtPassword" promptText="Mínimo 8 caracteres"/>
+                <Label styleClass="texto-suave" text="Repetir contraseña"/>
+                <PasswordField fx:id="txtRepetir" promptText="Escribe la contraseña otra vez"/>
+                <Button fx:id="btnCrear" text="Crear cuenta" styleClass="boton-primario" maxWidth="Infinity"
+                        defaultButton="true" onAction="#crear"/>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="6">
+            <padding><Insets top="0" right="16" bottom="16" left="16"/></padding>
+            <Label styleClass="texto-suave" text="¿Ya tienes cuenta?"/>
+            <Button text="Volver" styleClass="boton-secundario" onAction="#volver"/>
+        </HBox>
+    </bottom>
+</BorderPane>
