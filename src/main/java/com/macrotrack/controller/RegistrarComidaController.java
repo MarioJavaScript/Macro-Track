@@ -17,14 +17,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.macrotrack.controller.DashboardController.formato;
 
 /**
  * Pantalla para registrar una porción de comida.
- * Usa AlimentoService.buscar() para el buscador y RegistroService.registrar() para guardar.
+ * Al abrir muestra todo el catálogo (AlimentoService.listarTodos()) y al escribir lo filtra
+ * (AlimentoService.buscar()). RegistroService.registrar() guarda la porción.
  */
 public class RegistrarComidaController {
 
@@ -41,6 +45,9 @@ public class RegistrarComidaController {
     private final AlimentoService alimentoService = new AlimentoService();
     private final RegistroService registroService = new RegistroService();
 
+    /** Catálogo completo que se carga al abrir la pantalla. */
+    private List<Alimento> catalogo = new ArrayList<>();
+
     /** Espera 300 ms después de la última tecla antes de buscar, para no consultar la BD en cada letra. */
     private final PauseTransition esperaBusqueda = new PauseTransition(Duration.millis(300));
 
@@ -50,7 +57,8 @@ public class RegistrarComidaController {
         cmbTipo.setValue(tipoSegunHora());
         dpFecha.setValue(LocalDate.now());
 
-        lstResultados.setPlaceholder(new Label("Escribe para buscar alimentos"));
+        txtBuscar.setPromptText("Buscar alimento...");
+        lstResultados.setPlaceholder(new Label("No hay alimentos en el catálogo"));
 
         // Buscador: reinicia la espera con cada tecla
         esperaBusqueda.setOnFinished(e -> buscar());
@@ -63,6 +71,18 @@ public class RegistrarComidaController {
         lstResultados.setOnMouseClicked(e -> { if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) txtGramos.requestFocus(); });
 
         btnGuardar.setDisable(true);
+
+        cargarCatalogo();
+    }
+
+    /** Trae todos los alimentos para que la lista no aparezca vacía al abrir. */
+    private void cargarCatalogo() {
+        try {
+            catalogo = alimentoService.listarTodos();
+            lstResultados.getItems().setAll(catalogo);
+        } catch (MacroTrackException e) {
+            Navegacion.error(e.getMessage());
+        }
     }
 
     /** El dashboard le pasa la fecha que estaba viendo. */
@@ -72,18 +92,47 @@ public class RegistrarComidaController {
         }
     }
 
+    /**
+     * Sin texto: muestra todo el catálogo. Con 1 letra: filtra el catálogo que ya está cargado.
+     * Con 2 o más: busca en la base de datos con AlimentoService.buscar().
+     */
     private void buscar() {
-        String texto = txtBuscar.getText();
+        String texto = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim();
         try {
-            lstResultados.getItems().setAll(alimentoService.buscar(texto));
-            if (texto != null && texto.trim().length() >= 2 && lstResultados.getItems().isEmpty()) {
-                lstResultados.setPlaceholder(new Label("No se encontró \"" + texto.trim() + "\""));
+            if (texto.isEmpty()) {
+                lstResultados.getItems().setAll(catalogo);
+            } else if (texto.length() == 1) {
+                lstResultados.getItems().setAll(filtrar(catalogo, texto));
             } else {
-                lstResultados.setPlaceholder(new Label("Escribe para buscar alimentos"));
+                lstResultados.getItems().setAll(alimentoService.buscar(texto));
+            }
+            if (lstResultados.getItems().isEmpty() && !texto.isEmpty()) {
+                lstResultados.setPlaceholder(new Label("No se encontró \"" + texto + "\""));
+            } else {
+                lstResultados.setPlaceholder(new Label("No hay alimentos en el catálogo"));
             }
         } catch (MacroTrackException e) {
             Navegacion.error(e.getMessage());
         }
+    }
+
+    /** Alimentos cuyo nombre contiene el texto, sin importar mayúsculas ni acentos. */
+    static List<Alimento> filtrar(List<Alimento> alimentos, String texto) {
+        String buscado = normalizar(texto);
+        List<Alimento> encontrados = new ArrayList<>();
+        for (Alimento a : alimentos) {
+            if (normalizar(a.getNombre()).contains(buscado)) {
+                encontrados.add(a);
+            }
+        }
+        return encontrados;
+    }
+
+    /** "Plátano" -> "platano". */
+    static String normalizar(String s) {
+        return Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase();
     }
 
     private void mostrarAlimento(Alimento alimento) {

@@ -32,6 +32,20 @@ public class AlimentoService {
     }
 
     /**
+     * Devuelve el catálogo de alimentos activos, ordenado por nombre (máximo 50).
+     * Se usa para mostrar la lista completa antes de que el usuario escriba.
+     */
+    public List<Alimento> listarTodos() {
+        Sesion.actual();
+        try {
+            // El procedimiento usa LIKE '%texto%': con texto vacío trae todos los activos
+            return alimentoDAO.buscar("");
+        } catch (SQLException e) {
+            throw new ErrorBDException(e);
+        }
+    }
+
+    /**
      * Busca alimentos activos cuyo nombre contenga el texto (máximo 50 resultados).
      *
      * @return la lista encontrada; vacía si el texto tiene menos de 2 caracteres
